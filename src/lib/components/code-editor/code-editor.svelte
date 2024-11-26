@@ -61,7 +61,7 @@
 				'bg-transparent text-transparent caret-white',
 				'font-mono',
 				'p-4',
-				'resize-none overflow-hidden focus:outline-none',
+				'resize-none overflow-hidden focus:outline-none'
 			)}
 		></textarea>
 	</div>
@@ -79,3 +79,12 @@
 	{@render heading()}
 	{@render editors()}
 </div>
+
+<style>
+	textarea,
+	pre {
+		overflow-wrap: break-word;
+    white-space: pre-wrap;
+    word-break: keep-all;
+	}
+</style>
