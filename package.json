@@ -33,6 +33,7 @@
 	},
 	"dependencies": {
 		"@fontsource/jetbrains-mono": "^5.1.1",
-		"clsx": "^2.1.1"
+		"clsx": "^2.1.1",
+		"highlight.js": "^11.10.0"
 	}
 }
