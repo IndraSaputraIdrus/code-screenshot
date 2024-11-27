@@ -3,6 +3,7 @@
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import hljs from 'highlight.js/lib/core';
 	import 'highlight.js/styles/github-dark.css';
+	import { tick } from 'svelte';
 
 	hljs.registerLanguage('javascript', javascript);
 
@@ -15,6 +16,25 @@
 	let highlighterCode = $derived(
 		hljs.highlight(editor.code, { language: 'javascript' }).value + '<br />'
 	);
+
+	function indentLine(text: string, start: number, end: number) {
+		return `${text.slice(0, start)}\t${text.slice(end)}`;
+	}
+
+	function handleKeyDown(e: KeyboardEvent) {
+		const target = e.target as HTMLTextAreaElement;
+		const selectionStart = target.selectionStart;
+		const selectionEnd = target.selectionEnd;
+
+		if (e.key === 'Tab') {
+			e.preventDefault();
+			editor.code = indentLine(editor.code, selectionStart, selectionEnd);
+			tick().then(() => {
+				target.selectionStart = selectionStart + 1;
+				target.selectionEnd = selectionStart + 1;
+			});
+		}
+	}
 </script>
 
 {#snippet heading()}
@@ -51,6 +71,7 @@
 			{/if}
 		</div>
 		<textarea
+			onkeydown={handleKeyDown}
 			tabindex="-1"
 			autocomplete="off"
 			spellcheck="false"
@@ -84,7 +105,7 @@
 	textarea,
 	pre {
 		overflow-wrap: break-word;
-    white-space: pre-wrap;
-    word-break: keep-all;
+		white-space: pre-wrap;
+		word-break: keep-all;
 	}
 </style>
