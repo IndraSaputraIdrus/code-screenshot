@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { tick } from 'svelte';
 	import CodeEditor from './code-editor';
 
 	const maxWidth = 920;
@@ -61,9 +60,11 @@
 
 <div
 	bind:this={frame}
-	style="min-width: {minWidth}px; max-width: {maxWidth}px; width: {minWidth}px"
+	style="min-width: {minWidth}px; max-width: {maxWidth}px; width: auto"
 	class="relative mx-auto w-full bg-gradient-to-br from-pink-700 to-fuchsia-700 p-5"
 >
 	{@render resizeButton()}
 	<CodeEditor />
 </div>
+
+<p class="text-white">{width}</p>
