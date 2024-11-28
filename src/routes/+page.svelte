@@ -1,7 +1,7 @@
 <script lang="ts">
-	import CodeEditor from '$lib/components/code-editor';
+	import Frame from '$lib/components/frame.svelte';
 </script>
 
-<main class="container mx-auto h-svh py-10 px-5">
-	<CodeEditor />
+<main class="h-svh bg-slate-950 px-5 py-10">
+	<Frame />
 </main>
