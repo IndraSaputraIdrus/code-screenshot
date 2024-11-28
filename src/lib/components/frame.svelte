@@ -66,5 +66,3 @@
 	{@render resizeButton()}
 	<CodeEditor />
 </div>
-
-<p class="text-white">{width}</p>
