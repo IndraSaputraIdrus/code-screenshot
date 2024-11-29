@@ -1,24 +1,21 @@
 <script lang="ts">
 	import CodeEditor from '$lib/components/code-editor';
 	import Frame from '$lib/components/frame.svelte';
+	import Header from '$lib/components/header.svelte';
+	import Footer from '$lib/components/footer.svelte';
 	import { appStore } from '$lib/store.svelte';
-	import { download } from '$lib/utils';
-
-	$inspect(appStore);
+	import Control from '$lib/components/control.svelte';
 </script>
 
-<main class="h-svh bg-slate-950 px-5 py-10">
-	<div class="flex h-full flex-col *:border *:border-red-500">
-		<header class="text-white">CodeInx</header>
-		<div class="grid grow place-content-center overflow-y-auto">
+<main class="h-full bg-slate-950 px-5">
+	<div class="flex h-full flex-col">
+		<Header />
+		<div class="container mx-auto mt-16 flex w-full grow flex-col justify-start gap-10 py-16">
+			<Control />
 			<Frame>
 				<CodeEditor bind:code={appStore.code} bind:title={appStore.title} />
 			</Frame>
 		</div>
-		<div>
-			<button onclick={() => download(appStore.frame, appStore.title)} class="bg-red-500 text-white"
-				>Download</button
-			>
-		</div>
+		<Footer />
 	</div>
 </main>

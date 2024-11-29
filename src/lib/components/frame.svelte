@@ -71,7 +71,7 @@
 
 <div
 	bind:this={frame}
-	style="min-width: {minWidth}px; max-width: {maxWidth}px; width: auto"
+	style="min-width: {minWidth}px; max-width: {maxWidth}px; width: {width}px"
 	class="relative mx-auto w-full bg-gradient-to-br from-pink-600 to-fuchsia-600 p-8"
 >
 	{@render resizeButton()}
