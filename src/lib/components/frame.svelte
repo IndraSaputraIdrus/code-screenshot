@@ -1,5 +1,12 @@
 <script lang="ts">
-	import CodeEditor from './code-editor';
+	import type { Snippet } from 'svelte';
+	import { appStore } from '$lib/store.svelte.ts';
+
+	type Props = {
+		children: Snippet<[]>;
+	};
+
+	let { children }: Props = $props();
 
 	const maxWidth = 920;
 	const minWidth = 520;
@@ -36,6 +43,10 @@
 			frame.style.width = `${frameWidth + delta * 2}px`;
 		}
 	}
+
+	$effect(() => {
+		appStore.frame = frame;
+	});
 </script>
 
 <svelte:window onmousemove={handleMouseMove} onmouseup={handleMouseUp} />
@@ -61,8 +72,8 @@
 <div
 	bind:this={frame}
 	style="min-width: {minWidth}px; max-width: {maxWidth}px; width: auto"
-	class="relative mx-auto w-full bg-gradient-to-br from-pink-700 to-fuchsia-700 p-5"
+	class="relative mx-auto w-full bg-gradient-to-br from-pink-600 to-fuchsia-600 p-8"
 >
 	{@render resizeButton()}
-	<CodeEditor />
+	{@render children()}
 </div>

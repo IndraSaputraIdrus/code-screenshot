@@ -7,14 +7,18 @@
 
 	hljs.registerLanguage('javascript', javascript);
 
-	let editor = $state({
-		title: 'Untitled-1',
-		code: `console.log('Hello world')`,
-		lang: 'javascript'
-	});
+	type Props = {
+		code: string;
+		title: string;
+	};
+
+	let { 
+    code = $bindable(), 
+    title = $bindable() 
+  }: Props = $props();
 
 	let highlighterCode = $derived(
-		hljs.highlight(editor.code, { language: 'javascript' }).value + '<br />'
+		hljs.highlight(code, { language: 'javascript' }).value + '<br />'
 	);
 
 	function indentLine(text: string, start: number, end: number) {
@@ -28,7 +32,7 @@
 
 		if (e.key === 'Tab') {
 			e.preventDefault();
-			editor.code = indentLine(editor.code, selectionStart, selectionEnd);
+			code = indentLine(code, selectionStart, selectionEnd);
 			tick().then(() => {
 				target.selectionStart = selectionStart + 1;
 				target.selectionEnd = selectionStart + 1;
@@ -41,7 +45,7 @@
 	<div class="grid grid-cols-[1fr_2fr_1fr] gap-4 border-b border-slate-500/50 px-5 py-4">
 		<div class="flex items-center gap-2">
 			{#each { length: 3 } as _}
-				<span class="size-3 rounded-full bg-slate-500/50"></span>
+				<span class="size-3.5 rounded-full bg-slate-500/50"></span>
 			{/each}
 		</div>
 		<input
@@ -52,10 +56,11 @@
 			onclick={(e) => {
 				e.currentTarget.select();
 			}}
-			bind:value={editor.title}
+			bind:value={title}
 			class={clsx(
 				'w-full justify-self-center bg-transparent text-center outline-none',
-				'text-sm opacity-60'
+				'text-sm text-slate-500',
+				'font-mono font-bold'
 			)}
 		/>
 	</div>
@@ -63,7 +68,7 @@
 
 {#snippet editors()}
 	<div class="relative">
-		<div class="relative inset-0 h-full w-full p-4 font-mono">
+		<div class="relative inset-0 h-full w-full p-4 font-mono font-bold">
 			{#if highlighterCode === '<br />'}
 				<p class="text-slate-500">Type some code...</p>
 			{:else}
@@ -72,15 +77,16 @@
 		</div>
 		<textarea
 			onkeydown={handleKeyDown}
+			onclick={(e) => e.currentTarget.select()}
 			tabindex="-1"
 			autocomplete="off"
 			spellcheck="false"
 			autocapitalize="off"
-			bind:value={editor.code}
+			bind:value={code}
 			class={clsx(
 				'absolute inset-0',
 				'bg-transparent text-transparent caret-white',
-				'font-mono',
+				'font-mono font-bold',
 				'p-4',
 				'resize-none overflow-hidden focus:outline-none'
 			)}
@@ -91,10 +97,10 @@
 <div
 	class={clsx(
 		'grid grid-cols-1',
-		'mx-auto w-full min-w-[350px] max-w-2xl',
-		'bg-slate-950 text-white',
-		'rounded-lg',
-		'border border-slate-500/50'
+		'mx-auto w-full',
+		'bg-slate-950/80 text-white',
+		'rounded-xl',
+		'border-2 border-slate-500/50'
 	)}
 >
 	{@render heading()}
