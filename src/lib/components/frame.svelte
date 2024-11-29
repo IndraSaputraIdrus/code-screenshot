@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { appStore } from '$lib/store.svelte.ts';
+	import { appStore } from '$lib/store.svelte';
+	import { backgrounds } from '$lib/constants';
+	import clsx from 'clsx';
 
 	type Props = {
 		children: Snippet<[]>;
@@ -44,6 +46,10 @@
 		}
 	}
 
+	let selectedBackground = $derived(
+		backgrounds.find(({ value }) => value === appStore.background)?.class
+	);
+
 	$effect(() => {
 		appStore.frame = frame;
 	});
@@ -72,7 +78,7 @@
 <div
 	bind:this={frame}
 	style="min-width: {minWidth}px; max-width: {maxWidth}px; width: {width}px"
-	class="relative mx-auto w-full bg-gradient-to-br from-pink-600 to-fuchsia-600 p-8"
+	class={clsx('relative mx-auto w-full p-8', selectedBackground)}
 >
 	{@render resizeButton()}
 	{@render children()}

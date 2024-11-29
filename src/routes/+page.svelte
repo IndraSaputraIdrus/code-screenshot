@@ -10,7 +10,7 @@
 <main class="h-full bg-slate-950 px-5">
 	<div class="flex h-full flex-col">
 		<Header />
-		<div class="container mx-auto mt-16 flex w-full grow flex-col justify-start gap-10 py-16">
+		<div class="container mx-auto mt-16 flex w-full grow flex-col justify-start gap-10">
 			<Control />
 			<Frame>
 				<CodeEditor bind:code={appStore.code} bind:title={appStore.title} />
