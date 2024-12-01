@@ -1,1 +1,1 @@
-handle wrap in text editor
+fix download button

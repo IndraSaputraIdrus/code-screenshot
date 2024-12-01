@@ -1,25 +1,80 @@
 <script lang="ts">
 	import clsx from 'clsx';
-	import javascript from 'highlight.js/lib/languages/javascript';
-	import hljs from 'highlight.js/lib/core';
-	import 'highlight.js/styles/github-dark.css';
+	import { createOnigurumaEngine } from 'shiki';
+	import {
+		createHighlighterCore,
+		type BundledLanguage,
+		type BundledTheme,
+		type HighlighterCore
+	} from 'shiki/bundle/web';
 	import { tick } from 'svelte';
-
-	hljs.registerLanguage('javascript', javascript);
 
 	type Props = {
 		code: string;
 		title: string;
+		theme: BundledTheme;
+		lang: BundledLanguage;
 	};
 
-	let { 
-    code = $bindable(), 
-    title = $bindable() 
-  }: Props = $props();
+	let { code = $bindable(), title = $bindable(), theme, lang }: Props = $props();
 
-	let highlighterCode = $derived(
-		hljs.highlight(code, { language: 'javascript' }).value + '<br />'
-	);
+	let highlighter: HighlighterCore | undefined = $state();
+	let highlightedCode = $state();
+	let loading = $state(true);
+	let editorCode = $derived(code.length === 0 ? '// Type some code...' : code + '\t');
+	let bgColor = $state('#fff');
+	let textColor = $state('#000');
+
+	async function initHighlighter() {
+		loading = true;
+
+		highlighter = await createHighlighterCore({
+			langs: [
+				import('shiki/langs/javascript.mjs'),
+				import('shiki/langs/svelte.mjs'),
+				import('shiki/langs/typescript.mjs'),
+				import('shiki/langs/python.mjs')
+			],
+			themes: [
+				import('shiki/themes/nord.mjs'),
+				import('shiki/themes/dracula.mjs'),
+				import('shiki/themes/material-theme.mjs'),
+				import('shiki/themes/tokyo-night.mjs')
+			],
+			engine: createOnigurumaEngine(import('shiki/wasm'))
+		});
+
+		loading = false;
+	}
+
+	$effect(() => {
+		initHighlighter();
+		return () => highlighter!.dispose();
+	});
+
+	$effect(() => {
+		if (theme || lang) {
+			highlightedCode = highlighter?.codeToHtml(editorCode, {
+				lang,
+				theme,
+				transformers: [
+					{
+						pre(node) {
+							//const style = node.properties.style
+							node.properties.class = 'p-4';
+							getColor(node.properties.style as string);
+						}
+					}
+				]
+			});
+		}
+	});
+
+	function getColor(style: string) {
+		const [background, color] = style.split(';');
+		bgColor = background.split(':')[1];
+		textColor = color.split(':')[1];
+	}
 
 	function indentLine(text: string, start: number, end: number) {
 		return `${text.slice(0, start)}\t${text.slice(end)}`;
@@ -44,9 +99,9 @@
 {#snippet heading()}
 	<div class="grid grid-cols-[1fr_2fr_1fr] gap-4 border-b border-slate-500/50 px-5 py-4">
 		<div class="flex items-center gap-2">
-			{#each { length: 3 } as _}
-				<span class="size-3.5 rounded-full bg-slate-500/50"></span>
-			{/each}
+			<span class="size-3.5 rounded-full bg-red-500"></span>
+			<span class="size-3.5 rounded-full bg-yellow-500"></span>
+			<span class="size-3.5 rounded-full bg-green-500"></span>
 		</div>
 		<input
 			type="text"
@@ -57,9 +112,10 @@
 				e.currentTarget.select();
 			}}
 			bind:value={title}
+			style="color: ${textColor}"
 			class={clsx(
 				'w-full justify-self-center bg-transparent text-center outline-none',
-				'text-sm text-slate-500',
+				'text-sm',
 				'font-mono font-bold'
 			)}
 		/>
@@ -68,13 +124,7 @@
 
 {#snippet editors()}
 	<div class="relative">
-		<div class="relative inset-0 h-full w-full p-4 font-mono font-bold">
-			{#if highlighterCode === '<br />'}
-				<p class="text-slate-500">Type some code...</p>
-			{:else}
-				<pre>{@html highlighterCode}</pre>
-			{/if}
-		</div>
+		{@html highlightedCode}
 		<textarea
 			onkeydown={handleKeyDown}
 			onclick={(e) => e.currentTarget.select()}
@@ -84,7 +134,7 @@
 			autocapitalize="off"
 			bind:value={code}
 			class={clsx(
-				'absolute inset-0',
+				'absolute inset-0 h-full',
 				'bg-transparent text-transparent caret-white',
 				'font-mono font-bold',
 				'p-4',
@@ -94,22 +144,24 @@
 	</div>
 {/snippet}
 
-<div
-	class={clsx(
-		'grid grid-cols-1',
-		'mx-auto w-full',
-		'bg-slate-950/80 text-white',
-		'rounded-xl',
-		'border-2 border-slate-500/50'
-	)}
->
-	{@render heading()}
-	{@render editors()}
-</div>
+{#if !loading}
+	<div
+		style="background-color: {bgColor};"
+		class={clsx(
+			'grid grid-cols-1',
+			'mx-auto w-full',
+			'text-white',
+			'overflow-hidden rounded-xl',
+			'border-2 border-slate-500/50'
+		)}
+	>
+		{@render heading()}
+		{@render editors()}
+	</div>
+{/if}
 
 <style>
-	textarea,
-	pre {
+	:global(textarea, pre) {
 		overflow-wrap: break-word;
 		white-space: pre-wrap;
 		word-break: keep-all;

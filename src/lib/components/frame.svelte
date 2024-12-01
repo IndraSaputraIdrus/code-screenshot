@@ -13,19 +13,20 @@
 	const maxWidth = 920;
 	const minWidth = 520;
 
-	let frame: HTMLElement;
+	let frame: HTMLElement | undefined = $state();
 
 	let frameWidth = $state(0);
 	let width = $state(minWidth);
 	let isResizing = $state(false);
 	let startX = $state(0);
 	let direction: 'left' | 'right' | undefined = $state();
+	let framePadding = $derived(appStore.padding);
 
 	function handleMouseDown(e: MouseEvent, elementDirection: 'left' | 'right') {
 		isResizing = true;
 		startX = e.clientX;
 		direction = elementDirection;
-		frameWidth = frame.getBoundingClientRect().width;
+		frameWidth = frame!.getBoundingClientRect().width;
 	}
 
 	function handleMouseUp() {
@@ -37,12 +38,12 @@
 
 	function handleMouseMove(e: MouseEvent) {
 		if (!isResizing) return;
-		width = frame.getBoundingClientRect().width;
+		width = frame!.getBoundingClientRect().width;
 		const delta = e.clientX - startX;
 		if (direction === 'left') {
-			frame.style.width = `${frameWidth - delta * 2}px`;
+			frame!.style.width = `${frameWidth - delta * 2}px`;
 		} else {
-			frame.style.width = `${frameWidth + delta * 2}px`;
+			frame!.style.width = `${frameWidth + delta * 2}px`;
 		}
 	}
 
@@ -51,7 +52,9 @@
 	);
 
 	$effect(() => {
-		appStore.frame = frame;
+		if (frame) {
+			appStore.frame = frame;
+		}
 	});
 </script>
 
@@ -77,8 +80,8 @@
 
 <div
 	bind:this={frame}
-	style="min-width: {minWidth}px; max-width: {maxWidth}px; width: {width}px"
-	class={clsx('relative mx-auto w-full p-8', selectedBackground)}
+	style="min-width: {minWidth}px; max-width: {maxWidth}px; width: {width}px; padding: {framePadding}"
+	class={clsx('relative mx-auto my-10 w-full transition-[padding]', selectedBackground)}
 >
 	{@render resizeButton()}
 	{@render children()}

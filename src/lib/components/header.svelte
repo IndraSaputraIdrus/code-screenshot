@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { appStore } from '$lib/store.svelte';
 	import { download } from '$lib/utils';
+
+	$inspect(appStore.frame);
 </script>
 
-<header class="fixed inset-x-0 top-0 z-[9999] bg-slate-950 h-16 flex items-center">
+<header class="fixed inset-x-0 top-0 z-[9999] flex h-16 items-center bg-slate-950">
 	<div class="container mx-auto flex w-full items-center justify-between">
 		<h1 class="font-mono text-2xl font-bold text-slate-100">CodeInx</h1>
 
