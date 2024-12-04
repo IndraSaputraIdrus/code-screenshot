@@ -14,9 +14,10 @@
 		title: string;
 		theme: BundledTheme;
 		lang: BundledLanguage;
+    onLoad?: () => void;
 	};
 
-	let { code = $bindable(), title = $bindable(), theme, lang }: Props = $props();
+	let { code = $bindable(), title = $bindable(), theme, lang, onLoad }: Props = $props();
 
 	let highlighter: HighlighterCore | undefined = $state();
 	let highlightedCode = $state();
@@ -45,6 +46,7 @@
 		});
 
 		loading = false;
+    onLoad?.()
 	}
 
 	$effect(() => {

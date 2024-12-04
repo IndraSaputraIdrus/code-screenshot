@@ -1,7 +1,7 @@
 import type { BundledLanguage, BundledTheme } from "shiki/bundle/web";
 
 export type Store = {
-  frame: HTMLElement | null,
+  frame: HTMLElement | undefined,
   code: string,
   title: string,
   language: BundledLanguage;
@@ -12,7 +12,7 @@ export type Store = {
 
 
 export const appStore: Store = $state({
-  frame: null,
+  frame: undefined,
   code: `function sayHello() {\n\treturn 'Hello world'\n} \n\nconsole.log(sayHello())`,
   title: 'main.js',
   language: 'javascript',

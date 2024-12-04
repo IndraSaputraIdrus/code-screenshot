@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { appStore } from '$lib/store.svelte';
-	import { backgrounds } from '$lib/constants';
+	import { backgroundClass } from '$lib/constants';
 	import clsx from 'clsx';
 
 	type Props = {
@@ -48,13 +48,11 @@
 	}
 
 	let selectedBackground = $derived(
-		backgrounds.find(({ value }) => value === appStore.background)?.class
+		backgroundClass.find(({ name }) => name === appStore.background)?.value
 	);
 
 	$effect(() => {
-		if (frame) {
-			appStore.frame = frame;
-		}
+		appStore.frame = frame;
 	});
 </script>
 
@@ -81,7 +79,7 @@
 <div
 	bind:this={frame}
 	style="min-width: {minWidth}px; max-width: {maxWidth}px; width: {width}px; padding: {framePadding}"
-	class={clsx('relative mx-auto my-10 w-full transition-[padding]', selectedBackground)}
+	class={clsx('relative w-full transition-[padding]', selectedBackground)}
 >
 	{@render resizeButton()}
 	{@render children()}
