@@ -1,1 +1,1 @@
-fix download button
+BUG: blinking in select form
